@@ -23,15 +23,19 @@ var socket;
 var isPlaying = false;
 var players = [];
 var playerName;
-var cursorUrl = "https://my.mixtape.moe/lxdjxj.png";
+var cursorUrl = "https://raw.githubusercontent.com/343N/raintest-mp/master/cursor.png";
 var cursorImage, cursorLoaded;
+var col = { r: 0, g: 0, b: 0 };
+var playerName = "dicks";
+var dialogueBox, dialogueText, submitButton;
 
 function setup() {
     //noLoop();
     cursorLoaded = false;
-    isPlaying = true;
+    // isPlaying = true;
     loadImage(cursorUrl, function(img) {
         cursorImage = img;
+        console.log("Loaded");
         cursorLoaded = true;
     });
     sizeX = $(window).width();
@@ -45,13 +49,31 @@ function setup() {
     fillerDiv = createDiv();
     fillerDiv.id('fillerDiv');
     fillerDiv.html('Draw with your friends!');
-    loginDiv = createDiv();
-    saveButton = createDiv();
     // saveButton.id('saveButton');
     // saveButton.mouseClicked(saveDrawing);
     // saveButton.html(`Save drawing as`);
+
+
     nameInput = createInput('Unnamed');
-    //nameInput.id('nameInput');
+    nameInput.id('nameInput');
+    nameInput.style('display','none');
+
+
+    dialogueBox = createDiv('');
+    dialogueBox.id('dialogueBox');
+    dialogueText = createDiv('');
+    dialogueText.html('Connecting...');
+    dialogueText.id('dialogueText');
+    dialogueText.parent('#dialogueBox');
+    nameInput.parent('#dialogueBox')
+
+    // submitButton = createDiv('Join!');
+    // submitButton.style('display','none');
+    // nameInput.parent('#dialogueBox');
+
+
+
+
 
     // menuDiv.mouseClicked();
     // saveButton.parent('#menuDiv');
@@ -68,6 +90,10 @@ function setup() {
     // copyDiv.mousePressed(saveDrawingToString);
     // copyDiv.changed(setNewDrawing);
     // copyDiv.html('Clear drawing.');
+    clearButton = createDiv();
+    clearButton.id('clearButton');
+    clearButton.html('Clear Drawing');
+    clearButton.mouseClicked(clearDrawing);
     collisionCheckbox = createCheckbox('Enable Collision', true);
     collisionCheckbox.changed(toggleCollision);
     // translate(0,);
@@ -75,6 +101,7 @@ function setup() {
         raindrops.push(new Raindrop);
     }
     // frameRate(4)
+
     connectToServer();
 
 
@@ -99,17 +126,43 @@ function connectToServer() {
         blocksArray.splice(i, 1);
     });
     socket.on('addInitialBlocks', function(data) {
+        blocksArray = [];
         for (var i = 0; i < data.length; i++) {
             blocksArray.push(new Block(data[i].x, data[i].y, data[i].scale, data[i].r, data[i].g, data[i].b));
         }
     });
+    socket.on("connect_error", function(){
+      dialogueText.html(`Cant connect! Retrying... <br><br><span style="font-size: 1.25vw">Pester 343N if this keeps failing and you have internet access.</span>`);
+    })
+    socket.on('clearDrawing', function() {
+      blocksArray = [];
+    });
     socket.on('connect', function() {
         count = 200;
+        col['r'] = random(192,255);
+        col['g'] = random(192,255);
+        col['b'] = random(192,255);
         connected = true;
+        dialogueText.html(`Set your name:`);
+
+        nameInput.style('display','inline');
+
+        submitButton = createDiv('Join!');
+        submitButton.id('submitButton');
+        submitButton.parent('#dialogueBox');
+        submitButton.mouseClicked(startPlaying);
+        // submitButton.style('display','inline');
     });
     socket.on('disconnect', function() {
         count = 0;
         connected = false;
+        dialogueText.html(`Cant connect! Retrying... <br><br><span style="font-size: 1.25vw">Pester 343N if this keeps failing and you have internet access.</span>`);
+        dialogueBox = createDiv('');
+        dialogueBox.id('dialogueBox');
+        dialogueText = createDiv('');
+        dialogueText.html('Connecting...');
+        dialogueText.id('dialogueText');
+        dialogueText.parent('#dialogueBox');
     });
 
     socket.on('deletePlayer', function(data) {
@@ -125,15 +178,35 @@ function connectToServer() {
     socket.on('recieveMouseLocation', updateCursor);
 }
 
+function startPlaying(){
+  if (nameInput.value().length > 0 && nameInput.value().length < 30){
+    playerName = nameInput.value();
+    dialogueBox.remove();
+    dialogueText.remove();
+    nameInput.remove();
+    submitButton.remove();
+    isPlaying = true;
+  } else{
+    dialogueText.html('Name must be between 1 and 20 characters');
+  }
+}
+
 function sendCursorLoc() {
     if (isPlaying) {
         var sendInfo = {
             mouseX: mouseX,
             mouseY: mouseY,
-            name: playerName
+            name: playerName,
+            col: col
+
         }
         socket.emit('recieveMouseLocation', sendInfo);
     }
+}
+
+function clearDrawing(){
+  socket.emit('clearDrawing');
+  blocksArray = [];
 }
 
 function updateCursor(data) {
@@ -148,29 +221,42 @@ function updateCursor(data) {
     if (playerExists) {
         players[i].y = data.y;
         players[i].x = data.x;
+
+        // print(players[i].oldX, players[i].oldY, data.x, data.y)
         // console.log('cursor updated');
         // console.log(players[i].x);
         // console.log(players[i].y);
     } else {
-        var newData = data;
-        newData['r'] = random(100, 255);
-        newData['g'] = random(100, 255);
-        newData['b'] = random(100, 255);
+      var newData = data;
+      data['oldX'] = data.x;
+      data['oldY'] = data.y;
+      players.push(data);
         // console.log('cursor added');
         // console.log(newData);
-        players.push(newData);
     }
 }
 
 function drawCursors() {
     for (var i = 0; i < players.length; i++) {
         var p = players[i];
+        p.oldX = lerp(p.oldX, p.x, .25);
+        p.oldY = lerp(p.oldY, p.y, .25);
+
+        // console.log(p.x + " " + lerpY + "\n" + p.x  + " " + p.y + "\n" + p.oldX + " "+ p.oldY )
+
         // noStroke();
         if (!cursorLoaded) {
-            fill(p.r, p.g, p.b);
-            ellipse(p.x, p.y, 16);
+            fill(p.col.r, p.col.g, p.col.b);
+            ellipse(p.oldX, p.oldY, 16);
+            textAlign(CENTER);
+            text(p.name, p.oldX + 7, p.oldY + 46);
         } else {
-          img(cursorImage, p.x, p.y);
+            // print(p);
+            tint(p.col.r,p.col.g,p.col.b,192);
+            image(cursorImage, p.oldX, p.oldY);
+            textAlign(CENTER);
+            fill(255, 128);
+            text(p.name, p.oldX + 7, p.oldY + 32);
         }
 
     }
@@ -189,7 +275,7 @@ function toggleCollision() {
 
 
 function mouseClicked() {
-    if (connected) {
+    if (isPlaying) {
         for (var i = 0; i < blocksArray.length; i++) {
             if (mouseX > blocksArray[i].x &&
                 mouseX < blocksArray[i].x + blocksArray[i].scale &&
@@ -198,6 +284,7 @@ function mouseClicked() {
                 blocksArray.splice(i, 1);
                 socket.emit('removeBlock', i);
                 spaceIsAlreadyOccupied = true;
+                sendCursorLoc();
                 break;
             }
         }
@@ -239,6 +326,8 @@ function draw() {
     // fill(0);
     textSize(16);
     stroke(255);
+    strokeWeight(1);
+    textAlign(LEFT);
     text("Raindrop Count: " + Math.round(slider.value()), (sizeX / 8) * 3, sizeY - (sizeY / 7));
     text("Brush size: " + Math.round(sizeSlider.value()) + " px", (sizeX / 3) * 2, sizeY - (sizeY / 7));
     text("Gravity: " + Math.round(gravitySlider.value() * 100) / 100, (sizeX / 8), sizeY - (sizeY / 7));
@@ -249,7 +338,7 @@ function draw() {
     // text("Collision: " + collisionEnabled, (sizeX/8)*7, sizeY - (sizeY / 6));
 
     // console.log(gravitySlider.mouseOver());
-    if (mouseIsPressed && connected) {
+    if (mouseIsPressed && isPlaying) {
         var x = mouseX % blockScale;
         x = mouseX - x;
         var y = mouseY % blockScale;
@@ -293,6 +382,7 @@ function draw() {
             var newBlock = new Block(x, y, blockScale, random(255), random(255), random(255));
             blocksArray.push(newBlock);
             socket.emit('addBlock', newBlock);
+            sendCursorLoc();
             if (colFirstBlock) {
                 colMinX = x;
                 colMinY = y;
