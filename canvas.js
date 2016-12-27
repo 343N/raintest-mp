@@ -12,7 +12,8 @@ var blockScale = 16;
 var dontDelete = false;
 var colFirstBlock = true;
 var menuDiv;
-var ip = "http://116.240.152.165:9876";
+var ipAddr = "116.240.152.165:9876"
+var ip = "https://" + ipAddr;
 var menuOpened = false;
 var colMinX, colMaxX, colMinY, colMaxY;
 var db, nameInput;
