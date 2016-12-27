@@ -13,7 +13,7 @@ var dontDelete = false;
 var colFirstBlock = true;
 var menuDiv;
 var ipAddr = "116.240.152.165:9876";
-var ip = "";
+var ip = "116.240.152.165:9876";
 var menuOpened = false;
 var colMinX, colMaxX, colMinY, colMaxY;
 var db, nameInput;
