@@ -54,9 +54,6 @@ function setup() {
     // saveButton.html(`Save drawing as`);
 
 
-    nameInput = createInput('Unnamed');
-    nameInput.id('nameInput');
-    nameInput.style('display','none');
 
 
     dialogueBox = createDiv('');
@@ -65,7 +62,7 @@ function setup() {
     dialogueText.html('Connecting...');
     dialogueText.id('dialogueText');
     dialogueText.parent('#dialogueBox');
-    nameInput.parent('#dialogueBox')
+
 
     // submitButton = createDiv('Join!');
     // submitButton.style('display','none');
@@ -133,11 +130,15 @@ function connectToServer() {
     });
     socket.on("connect_error", function(){
       dialogueText.html(`Cant connect! Retrying... <br><br><span style="font-size: 1.25vw">Pester 343N if this keeps failing and you have internet access.</span>`);
+      players = [];
+      isPlaying = false;
+      playerName = "Unnamed";
     })
     socket.on('clearDrawing', function() {
       blocksArray = [];
     });
     socket.on('connect', function() {
+
         count = 200;
         col['r'] = random(192,255);
         col['g'] = random(192,255);
@@ -145,7 +146,10 @@ function connectToServer() {
         connected = true;
         dialogueText.html(`Set your name:`);
 
+        nameInput = createInput('Unnamed');
         nameInput.style('display','inline');
+        nameInput.id('nameInput');
+        nameInput.parent('#dialogueBox');
 
         submitButton = createDiv('Join!');
         submitButton.id('submitButton');
@@ -154,6 +158,9 @@ function connectToServer() {
         // submitButton.style('display','inline');
     });
     socket.on('disconnect', function() {
+        isPlaying = false;
+        playerName = "Unnamed";
+        players = [];
         count = 0;
         connected = false;
         dialogueText.html(`Cant connect! Retrying... <br><br><span style="font-size: 1.25vw">Pester 343N if this keeps failing and you have internet access.</span>`);
@@ -300,6 +307,9 @@ function mouseClicked() {
     dontDelete = false;
 
 }
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
 
 function draw() {
 
@@ -316,8 +326,8 @@ function draw() {
     // textposition((sizeX / 8) * 3, sizeY - (sizeY/7));
     // textAlign(CENTER);
     sizeX = $(window).width();
-    count = slider.value()
     sizeY = $(window).height();
+    count = slider.value()
     gravity = gravitySlider.value();
     background(0);
     wind = (mouseX - (sizeX / 2)) / (sizeX / 2) * 10;
