@@ -141,10 +141,10 @@ function connectToServer() {
     });
     socket.on('connect', function() {
         console.log('connected');
-        dialogueBox.remove();
-        dialogueText.remove();
-        nameInput.remove();
-        submitButton.remove();
+        // dialogueBox.remove();
+        // dialogueText.remove();
+        // nameInput.remove();
+        // submitButton.remove();
         count = 200;
         col['r'] = random(192,255);
         col['g'] = random(192,255);
