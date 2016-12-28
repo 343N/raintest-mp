@@ -121,7 +121,7 @@ function connectToServer() {
         blocksArray.push(new Block(data.x, data.y, data.scale, data.r, data.g, data.b));
     });
     socket.on('removeBlock', function(data) {
-        blocksArray.splice(i, 1);
+        blocksArray.splice(data, 1);
     });
     socket.on('addInitialBlocks', function(data) {
         blocksArray = [];
