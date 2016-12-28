@@ -36,7 +36,7 @@ function setup() {
     // isPlaying = true;
     loadImage(cursorUrl, function(img) {
         cursorImage = img;
-        console.log("Loaded");
+        // console.log("Loaded");
         cursorLoaded = true;
     });
     sizeX = $(window).width();
@@ -130,6 +130,7 @@ function connectToServer() {
         }
     });
     socket.on("connect_error", function(){
+      console.log('connect error');
       dialogueText.html(`Cant connect! Retrying... <br><br><span style="font-size: 1.25vw">Pester 343N if this keeps failing and you have internet access.</span>`);
       players = [];
       isPlaying = false;
@@ -139,6 +140,7 @@ function connectToServer() {
       blocksArray = [];
     });
     socket.on('connect', function() {
+        console.log('connected');
         dialogueBox.remove();
         dialogueText.remove();
         nameInput.remove();
@@ -169,6 +171,7 @@ function connectToServer() {
     });
     socket.on('disconnect', function() {
         isPlaying = false;
+        console.log('disconnected');
         playerName = "Unnamed";
         players = [];
         count = 0;
