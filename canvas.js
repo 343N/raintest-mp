@@ -150,12 +150,12 @@ function connectToServer() {
         col['g'] = random(192,255);
         col['b'] = random(192,255);
         connected = true;
-        dialogueBox = createDiv('');
-        dialogueBox.id('dialogueBox');
-        dialogueText = createDiv('');
-        dialogueText.html('Connecting...');
-        dialogueText.id('dialogueText');
-        dialogueText.parent('#dialogueBox');
+        // dialogueBox = createDiv('');
+        // dialogueBox.id('dialogueBox');
+        // dialogueText = createDiv('');
+        // dialogueText.html('Connecting...');
+        // dialogueText.id('dialogueText');
+        // dialogueText.parent('#dialogueBox');
         dialogueText.html(`Set your name:`);
 
         nameInput = createInput('Unnamed');
@@ -176,12 +176,16 @@ function connectToServer() {
         players = [];
         count = 0;
         connected = false;
-        dialogueBox = createDiv('');
+        dialogueBox.remove();
+        dialogueText.remove();
+        nameInput.remove();
+        submitButton.remove();
         dialogueBox.id('dialogueBox');
         dialogueText = createDiv('');
-        dialogueText.html('Connecting...');
+        // dialogueText.html('Connecting...');
         dialogueText.id('dialogueText');
         dialogueText.parent('#dialogueBox');
+        dialogueText.html(`Set your name:`);
     });
 
     socket.on('deletePlayer', function(data) {
