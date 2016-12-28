@@ -6,16 +6,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.5/addons/p5.sound.js" type="text/javascript"></script>
     <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-    <script src="https://rawgit.com/343N/raintest-mp/master/lightning.js" type="text/javascript"></script>
+    <!-- <script src="https://rawgit.com/343N/raintest-mp/master/lightning.js" type="text/javascript"></script>
     <script src="https://rawgit.com/343N/raintest-mp/master/splash.js" type="text/javascript"></script>
     <script src="https://rawgit.com/343N/raintest-mp/master/raindrop.js" type="text/javascript"></script>
     <script src="https://rawgit.com/343N/raintest-mp/master/block.js" type="text/javascript"></script>
-    <script src="https://rawgit.com/343N/raintest-mp/master/canvas.js" type="text/javascript"></script>
-    <!-- <script src="lightning.js" type="text/javascript"></script>
+    <script src="https://rawgit.com/343N/raintest-mp/master/canvas.js" type="text/javascript"></script> -->
+    <script src="lightning.js" type="text/javascript"></script>
     <script src="splash.js" type="text/javascript"></script>
     <script src="raindrop.js" type="text/javascript"></script>
     <script src="block.js" type="text/javascript"></script>
-    <script src="canvas.js" type="text/javascript"></script> -->
+    <script src="canvas.js" type="text/javascript"></script>
     <style>
       body {
         border: 0;
@@ -24,6 +24,7 @@
         color: white;
         box-sizing: content-box;
         overflow-x: hidden;
+        font-family: sans-serif;
         overflow-y: hidden;
       }
       #dialogueBox{
@@ -54,6 +55,37 @@
         text-align: center;
         transition: background-color 0.2s;
       }
+      #scoreboard {
+        width: 70%;
+        top: 50%;
+        left: 50%;
+        height: auto;
+        position:absolute;
+        transform: translate(-50%, -50%);
+        font-size: 1.25vw;
+        background-color: #212121;
+      }
+
+      #scoreboardLabelName {
+        font-size: 1.5vw;
+        background-color: #424242;
+        width: 50%;
+        /*left: 5%;*/
+        position: relative;
+        float: left;
+        height: auto;
+        text-align: left;
+        /*height: 100%;*/
+      }
+      #scoreboardLabelCount {
+        font-size: 1.5vw;
+        background-color: #424242;
+        width: 40%;
+        left: 50%;
+        position: relative;
+        height: auto;
+        text-align: right;
+      }
       #clearButton {
         /*background-color: #424242;*/
         color: white;
@@ -75,7 +107,7 @@
       }
       canvas{
         position: absolute;
-        /*top: 40px;*/
+        top:  40px;
       }
       #clearButton:hover {
           /*border-bottom: 1px solid white;*/

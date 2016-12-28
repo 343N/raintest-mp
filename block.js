@@ -1,4 +1,4 @@
-function Block(x, y, size, r,g,b) {
+function Block(x, y, size, r,g,b, owner) {
 
   this.x = x;
   this.y = y;
@@ -7,6 +7,7 @@ function Block(x, y, size, r,g,b) {
   this.g = g;
   this.b = b;
   this.color = color(r,g,b);
+  this.owner = owner;
 
   this.show = function() {
     // noStroke();

@@ -13,7 +13,7 @@ var dontDelete = false;
 var colFirstBlock = true;
 var menuDiv;
 var ipAddr = "116.240.152.165:9876";
-var ip = "116.240.152.165:9876";
+var ip = "http://116.240.152.165:9876";
 var menuOpened = false;
 var colMinX, colMaxX, colMinY, colMaxY;
 var db, nameInput;
@@ -28,7 +28,7 @@ var cursorUrl = "https://raw.githubusercontent.com/343N/raintest-mp/master/curso
 var cursorImage, cursorLoaded;
 var col = { r: 0, g: 0, b: 0 };
 var playerName = "dicks";
-var dialogueBox, dialogueText, submitButton;
+var dialogueBox, dialogueText, submitButton, scoreboard, scoreboardLabelName, scoreboardLabelCount;
 
 function setup() {
     //noLoop();
@@ -63,7 +63,22 @@ function setup() {
     dialogueText.html('Connecting...');
     dialogueText.id('dialogueText');
     dialogueText.parent('#dialogueBox');
+    //
+    // scoreboard = createDiv('');
+    // scoreboard.id('scoreboard');
 
+    // scoreboardLabel = createDiv('');
+    // scoreboardLabel.parent('#scoreboard');
+    //
+    // scoreboardLabelName = createDiv('');
+    // scoreboardLabelName.parent('#scoreboard');
+    // scoreboardLabelName.id('scoreboardLabelName');
+    // scoreboardLabelName.html('Name:')
+    //
+    // scoreboardLabelCount = createDiv('');
+    // scoreboardLabelCount.parent('#scoreboard');
+    // scoreboardLabelCount.id('scoreboardLabelCount');
+    // scoreboardLabelCount.html('Block Count:')
 
     // submitButton = createDiv('Join!');
     // submitButton.style('display','none');
@@ -111,6 +126,19 @@ function setup() {
 
 
 }
+//
+// function keyPressed() {
+//   if (keyCode === 9){
+//     scoreboard.style('display','inline');
+//     scoreboardLabelName.style('display','inline');
+//     scoreboardLabelCount.style('display','inline');
+//     // var entries = selectAll('.scoreboardEntry');
+//     // for (var i = 0; i < entries.length; i++){
+//     //   entries[i].style('display','inline');
+//     // }
+//   }
+//   return false;
+// }
 
 
 function connectToServer() {
@@ -118,7 +146,7 @@ function connectToServer() {
 
     // connected = ;
     socket.on('addBlock', function(data) {
-        blocksArray.push(new Block(data.x, data.y, data.scale, data.r, data.g, data.b));
+        blocksArray.push(new Block(data.x, data.y, data.scale, data.r, data.g, data.b, data.owner));
     });
     socket.on('removeBlock', function(data) {
         blocksArray.splice(data, 1);
@@ -325,7 +353,7 @@ function mouseClicked() {
 
 }
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+  resizeCanvas(windowWidth, windowHeight - 40);
 }
 
 function draw() {
@@ -358,6 +386,8 @@ function draw() {
     // text("Collision: " + collisionEnabled, (sizeX/8)*7, sizeY - (sizeY / 6));
 
     // console.log(gravitySlider.mouseOver());
+
+
     if (mouseIsPressed && isPlaying) {
         var x = mouseX % blockScale;
         x = mouseX - x;
@@ -400,7 +430,7 @@ function draw() {
         if (!spaceIsAlreadyOccupied) {
             dontDelete = true;
             if (blockScale > 64) blockScale = 64;
-            var newBlock = new Block(x, y, blockScale, random(255), random(255), random(255));
+            var newBlock = new Block(x, y, blockScale, random(255), random(255), random(255), playerName);
             blocksArray.push(newBlock);
             socket.emit('addBlock', newBlock);
             sendCursorLoc();
