@@ -180,6 +180,7 @@ function connectToServer() {
         dialogueText.remove();
         nameInput.remove();
         submitButton.remove();
+        dialogueBox = createDiv('');
         dialogueBox.id('dialogueBox');
         dialogueText = createDiv('');
         // dialogueText.html('Connecting...');
