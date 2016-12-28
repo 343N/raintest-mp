@@ -139,12 +139,21 @@ function connectToServer() {
       blocksArray = [];
     });
     socket.on('connect', function() {
-
+        dialogueBox.remove();
+        dialogueText.remove();
+        nameInput.remove();
+        submitButton.remove();
         count = 200;
         col['r'] = random(192,255);
         col['g'] = random(192,255);
         col['b'] = random(192,255);
         connected = true;
+        dialogueBox = createDiv('');
+        dialogueBox.id('dialogueBox');
+        dialogueText = createDiv('');
+        dialogueText.html('Connecting...');
+        dialogueText.id('dialogueText');
+        dialogueText.parent('#dialogueBox');
         dialogueText.html(`Set your name:`);
 
         nameInput = createInput('Unnamed');
@@ -164,7 +173,6 @@ function connectToServer() {
         players = [];
         count = 0;
         connected = false;
-        dialogueText.html(`Cant connect! Retrying... <br><br><span style="font-size: 1.25vw">Pester 343N if this keeps failing and you have internet access.</span>`);
         dialogueBox = createDiv('');
         dialogueBox.id('dialogueBox');
         dialogueText = createDiv('');
@@ -335,14 +343,7 @@ function draw() {
     wind = -wind
     blockScale = sizeSlider.value();
     // fill(0);
-    textSize(16);
-    stroke(255);
-    strokeWeight(1);
-    textAlign(LEFT);
-    text("Raindrop Count: " + Math.round(slider.value()), (sizeX / 8) * 3, sizeY - (sizeY / 7));
-    text("Brush size: " + Math.round(sizeSlider.value()) + " px", (sizeX / 3) * 2, sizeY - (sizeY / 7));
-    text("Gravity: " + Math.round(gravitySlider.value() * 100) / 100, (sizeX / 8), sizeY - (sizeY / 7));
-    text("FPS: " + Math.floor(frameRate()), 0, height - 16);
+
 
 
 
@@ -390,6 +391,7 @@ function draw() {
 
         if (!spaceIsAlreadyOccupied) {
             dontDelete = true;
+            if (blockScale > 64) blockScale = 64;
             var newBlock = new Block(x, y, blockScale, random(255), random(255), random(255));
             blocksArray.push(newBlock);
             socket.emit('addBlock', newBlock);
@@ -456,4 +458,12 @@ function draw() {
         }
     }
     drawCursors();
+    textSize(16);
+    stroke(255);
+    strokeWeight(1);
+    textAlign(LEFT);
+    text("Raindrop Count: " + Math.round(slider.value()), (sizeX / 8) * 3, sizeY - (sizeY / 7));
+    text("Brush size: " + Math.round(sizeSlider.value()) + " px", (sizeX / 3) * 2, sizeY - (sizeY / 7));
+    text("Gravity: " + Math.round(gravitySlider.value() * 100) / 100, (sizeX / 8), sizeY - (sizeY / 7));
+    text("FPS: " + Math.floor(frameRate()), 0, height - 16);
 }
