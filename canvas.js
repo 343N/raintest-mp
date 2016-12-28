@@ -186,7 +186,7 @@ function connectToServer() {
         // dialogueText.html('Connecting...');
         dialogueText.id('dialogueText');
         dialogueText.parent('#dialogueBox');
-        dialogueText.html(`Set your name:`);
+        dialogueText.html(`Connecting...`);
     });
 
     socket.on('deletePlayer', function(data) {
